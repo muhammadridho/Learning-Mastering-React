@@ -1,4 +1,8 @@
 import style from './styles/styles.scss'
+import React from 'react'
+import ReactDOM from 'react-dom'
 
-
-document.body.appendChild(component())
+ReactDOM.render(
+  <h1>Hello, world!</h1>,
+  document.getElementById('root')
+);

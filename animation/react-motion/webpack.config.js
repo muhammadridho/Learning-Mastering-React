@@ -9,11 +9,16 @@ var commonConf = {
       app : './src/app.js'
     },
     module : {
-      rules : [{
-        test : /\.js$/,
-        exclude: /node_modules/,
-        loader: 'babel-loader'
-      }
+      rules : [
+        {
+          test : /\.js$/,
+          exclude: /node_modules/,
+          loader: 'babel-loader'
+        },
+        {
+          test : /\.pug$/,
+          loaders : ['html-loader', 'pug-html-loader']
+        }
       ]
     },
     output : {
@@ -23,7 +28,8 @@ var commonConf = {
     },
     plugins : [
       new HtmlWebpackPlugin({
-        title : 'Belajar webpack'
+        title : 'Belajar webpack',
+        template : './src/template/index.pug'
       })
     ]
   },
