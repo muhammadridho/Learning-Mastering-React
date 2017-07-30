@@ -1,7 +1,8 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin'),
       path = require('path'),
       merge = require('webpack-merge'),
-      settings = require('./modular.js');
+      settings = require('./modular.webpack.js'),
+      siteConfig = require('./site.config.js')()
 
 
 var commonConf = {
