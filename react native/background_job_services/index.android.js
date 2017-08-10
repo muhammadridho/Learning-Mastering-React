@@ -12,9 +12,19 @@ import {
   View,
   ListView
 } from 'react-native';
+const styles = require('./styles.js')
 
 import BackgroundTimer from 'react-native-background-timer'
 import * as firebase from 'firebase'
+const ListItem = require('./components/ListItem');
+const firebaseConfig = {
+  apiKey: 'AIzaSyC3ebdIS2Hyt0QDL7A4_QJC0Nuu6lK6jUE',
+  authDomain : 'firereactbasenative.firebaseapp.com',
+  databaseURL : 'https://firereactbasenative.firebaseio.com',
+  storageBucket : ''
+}
+
+const firebaseApp = firebase.initializeApp(firebaseConfig);
 
 export default class background_job_services extends Component {
   constructor(props){
@@ -24,16 +34,22 @@ export default class background_job_services extends Component {
         rowHasChanged : (row1, row2) => row1 != row2,
       })
     }
-
-   this.itemsRef = firebaseApp.database().ref()
+   this.itemsRef = this.getRef().child('items');
   }
+
+  getRef() {
+    return firebaseApp.database().ref();
+  }
+
+
+
 
   componentDidMount(){
     //send to background job
     const intervalId = BackgroundTimer.setInterval(() => {
 	console.log('tic');
     }, 200);
-    
+
   }
 
   listenForItems(itemsRef) {
@@ -69,28 +85,26 @@ export default class background_job_services extends Component {
           Double tap R on your keyboard to reload,{'\n'}
           Shake or press menu button for dev menu
         </Text>
+
+        <ListView
+          dataSource={this.state.dataSource}
+          renderRow={this._renderItem.bind(this)}
+          enableEmptySections={true}
+          style={styles.listview}/>
       </View>
     );
   }
+
+
+  _renderItem(item) {
+
+
+
+    return (
+      <ListItem item={item} onPress={() => console.log('clicked')} />
+    );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
+}
 
 AppRegistry.registerComponent('background_job_services', () => background_job_services);
