@@ -12,7 +12,21 @@ import {
   View
 } from 'react-native';
 
+import BackgroundTimer from 'react-native-background-timer'
+
 export default class background_job_services extends Component {
+  constructor(props){
+   super(props)
+  }
+
+  componentDidMount(){
+   const intervalId = BackgroundTimer.setInterval(() => {
+
+	console.log('tic');
+}, 200);
+    
+  }
+
   render() {
     return (
       <View style={styles.container}>
