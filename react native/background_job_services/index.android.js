@@ -9,23 +9,52 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  View,
+  ListView
 } from 'react-native';
 
 import BackgroundTimer from 'react-native-background-timer'
+import * as firebase from 'firebase'
 
 export default class background_job_services extends Component {
   constructor(props){
    super(props)
+   this.state = {
+      dataSource : new ListView.DataSource({
+        rowHasChanged : (row1, row2) => row1 != row2,
+      })
+    }
+
+   this.itemsRef = firebaseApp.database().ref()
   }
 
   componentDidMount(){
-   const intervalId = BackgroundTimer.setInterval(() => {
-
+    //send to background job
+    const intervalId = BackgroundTimer.setInterval(() => {
 	console.log('tic');
-}, 200);
+    }, 200);
     
   }
+
+  listenForItems(itemsRef) {
+    itemsRef.on('value', (snap) => {
+
+      // get children as an array
+      var items = [];
+      snap.forEach((child) => {
+        items.push({
+          title: child.val().title,
+          _key: child.key
+        });
+      });
+
+      this.setState({
+        dataSource: this.state.dataSource.cloneWithRows(items)
+      });
+
+    });
+  }
+
 
   render() {
     return (
