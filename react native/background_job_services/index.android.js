@@ -41,18 +41,47 @@ export default class background_job_services extends Component {
     return firebaseApp.database().ref();
   }
 
-
-
+  async requestMapPermission() {
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.CAMERA,
+      {
+        'title': 'Request Map Permission',
+        'message': 'Cool Photo App needs access to your camera ' +
+                   'so you can take awesome pictures.'
+      }
+    )
+    if (granted === PermissionsAndroid.ACCESS_FINE_LOCATION) {
+      console.log("You can use the camera")
+    } else {
+      console.log("Camera permission denied")
+    }
+  } catch (err) {
+    console.warn(err)
+  }
+}
 
   componentDidMount(){
     //send to background job
-    const intervalId = BackgroundTimer.setInterval(() => {
-	console.log('tic');
-    }, 200);
+        await requestMapPermission()
+        this.listenForItems(this.itemsRef);
+        const intervalId = BackgroundTimer.setInterval(() => {
+          navigator.geolocation.getCurrentPosition(
+          (position) => {
+            console.log(`Position`, position);
+          },
+          (error) => console.log('errror',error),
+          { enableHighAccuracy: false, timeout: 2000, maximumAge: 100 },
+        );
+      }, 2000);
+  }
+
+  listenLocation(){
 
   }
 
   listenForItems(itemsRef) {
+    console.log('hj',itemsRef);
     itemsRef.on('value', (snap) => {
 
       // get children as an array
@@ -63,6 +92,7 @@ export default class background_job_services extends Component {
           _key: child.key
         });
       });
+      console.log('ada');
 
       this.setState({
         dataSource: this.state.dataSource.cloneWithRows(items)
@@ -85,6 +115,7 @@ export default class background_job_services extends Component {
           Double tap R on your keyboard to reload,{'\n'}
           Shake or press menu button for dev menu
         </Text>
+
 
         <ListView
           dataSource={this.state.dataSource}
